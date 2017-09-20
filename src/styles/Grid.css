@@ -1,0 +1,31 @@
+.Dungeon {
+  display: flex;
+  justify-content: center;
+}
+
+.row {
+  display: flex;
+  justify-content: center;
+  color: red;
+}
+
+.flex-container {
+  border: 1px solid black;
+  height: 100%;
+}
+
+.cell {
+  height: 1em;
+  width: 1em;
+  border: 1px solid black;
+  background: #2A3132;
+}
+
+.floor {
+  background: #d6d1d1;
+  border: 1px solid black;
+}
+
+.door {
+  background: red;
+}
