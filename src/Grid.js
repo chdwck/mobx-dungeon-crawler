@@ -14,7 +14,7 @@ export default class Dungeon extends Component {
             el.map((cell, i) => {
               return(
                 <div
-                  className={(cell.type == 'floor' || cell.type == 'door') ? 'cell ' + cell.type : 'cell'}
+                  className={(cell.type === 'floor' || cell.type === 'door') ? 'cell ' + cell.type : 'cell'}
                   style={{opacity: cell.opacity}}
                   key={i}
                 >
