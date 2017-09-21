@@ -3,7 +3,7 @@ import _ from 'lodash';
 const GRID_HEIGHT = 40;
 const GRID_WIDTH = 40;
 const MAX_ROOMS = 15;
-const ROOM_SIZE_RANGE = [7,12];
+const ROOM_SIZE_RANGE = [2, 7];
 
 const c = { GRID_HEIGHT, GRID_WIDTH, MAX_ROOMS, ROOM_SIZE_RANGE };
 
@@ -25,6 +25,11 @@ const placeCells = (grid, {x, y, width = 1, height = 1, id}, type = 'floor') => 
   }
   return grid;
 };
+
+const placeHero = (grid, {x, y, id}, type = "hero") => {
+  grid[y][x] = {type, id};
+  return grid;
+}
 
 const growMap = (grid, seedRooms, counter = 1, maxRooms = c.MAX_ROOMS) => {
   if (counter + seedRooms.length > maxRooms || !seedRooms.length) {
@@ -116,8 +121,6 @@ const createRoomsFromSeed = (grid, {x, y, width, height}, range = c.ROOM_SIZE_RA
 		return {grid, placedRooms};
   };
 
-
-
 export const createDungeon = () => {
   let grid = [];
   for (let i = 0; i < c.GRID_HEIGHT; i++) {
@@ -127,5 +130,6 @@ export const createDungeon = () => {
     }
   }
   grid = placeCells(grid, firstRoom);
+  placeHero(grid, firstRoom);
   return growMap(grid, [firstRoom]);
 }
