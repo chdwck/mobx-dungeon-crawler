@@ -17,15 +17,13 @@
 .cell {
   height: 1em;
   width: 1em;
-  border: 1px solid black;
+  border: 1px solid transparent;
   background: #2A3132;
 }
 
 .floor {
   background: #d6d1d1;
-  border: 1px solid black;
 }
-
-.door {
-  background: red;
+.hero {
+  background: green;
 }

@@ -1,21 +1,10 @@
 import _ from 'lodash';
+import UniverseStore from './UniverseStore';
+import config from './gridConfig';
 
-const GRID_HEIGHT = 40;
-const GRID_WIDTH = 40;
-const MAX_ROOMS = 15;
-const ROOM_SIZE_RANGE = [2, 7];
 
-const c = { GRID_HEIGHT, GRID_WIDTH, MAX_ROOMS, ROOM_SIZE_RANGE };
 
-const [min, max] = c.ROOM_SIZE_RANGE;
-
-const firstRoom = {
-  x: _.random(1, c.GRID_WIDTH - max - 15),
-  y: _.random(1,c.GRID_HEIGHT - max - 15),
-  height: _.random(min, max),
-  width: _.random(min, max),
-  id: '0'
-};
+const firstRoom = UniverseStore.firstRoom;
 
 const placeCells = (grid, {x, y, width = 1, height = 1, id}, type = 'floor') => {
   for (let i = y; i < y + height; i++) {
@@ -26,12 +15,13 @@ const placeCells = (grid, {x, y, width = 1, height = 1, id}, type = 'floor') => 
   return grid;
 };
 
-const placeHero = (grid, {x, y, id}, type = "hero") => {
-  grid[y][x] = {type, id};
+const placeHero = (grid) => {
+  const { xPos, yPos } = UniverseStore;
+  grid[firstRoom.y][firstRoom.x] = { type: "hero" };
   return grid;
 }
 
-const growMap = (grid, seedRooms, counter = 1, maxRooms = c.MAX_ROOMS) => {
+const growMap = (grid, seedRooms, counter = 1, maxRooms = config.MAX_ROOMS) => {
   if (counter + seedRooms.length > maxRooms || !seedRooms.length) {
     return grid;
   }
@@ -53,7 +43,7 @@ const isValidRoomPlacement = (grid, {x, y, width = 1, height = 1}) => {
   for (let i = y - 1; i < y + height + 1; i++) {
     for (let j = x - 1; j < x + width + 1; j++) {
       if (grid[i][j].type === 'floor') {
-        return false
+        return false;
       }
     }
   }
@@ -61,7 +51,7 @@ const isValidRoomPlacement = (grid, {x, y, width = 1, height = 1}) => {
 }
 
 
-const createRoomsFromSeed = (grid, {x, y, width, height}, range = c.ROOM_SIZE_RANGE) => {
+const createRoomsFromSeed = (grid, {x, y, width, height}, range = config.ROOM_SIZE_RANGE) => {
 		// range for generating the random room heights and widths
 		const [min, max] = range;
 
@@ -111,7 +101,7 @@ const createRoomsFromSeed = (grid, {x, y, width, height}, range = c.ROOM_SIZE_RA
 				// place room
 				grid = placeCells(grid, room);
 				// place door
-				grid = placeCells(grid, {x: room.doorx, y: room.doory}, 'door');
+				grid = placeCells(grid, {x: room.doorx, y: room.doory}, 'floor');
 				// need placed room values for the next seeds
 				placedRooms.push(room);
 			}
@@ -123,9 +113,9 @@ const createRoomsFromSeed = (grid, {x, y, width, height}, range = c.ROOM_SIZE_RA
 
 export const createDungeon = () => {
   let grid = [];
-  for (let i = 0; i < c.GRID_HEIGHT; i++) {
+  for (let i = 0; i < config.GRID_HEIGHT; i++) {
     grid.push([]);
-    for (let j = 0; j< c.GRID_WIDTH; j++) {
+    for (let j = 0; j< config.GRID_WIDTH; j++) {
       grid[i].push({type: 0, opacity: _.random(0.3, 0.8)});
     }
   }
