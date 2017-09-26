@@ -1,13 +1,15 @@
-import { computed, action, extendObservable } from 'mobx';
+import { action, extendObservable } from 'mobx';
 import _ from 'lodash';
 import config from './gridConfig';
 
 const [min, max] = config.ROOM_SIZE_RANGE;
+const chop = (num) => Math.ceil(num / 2);
 
 export class UniverseStore {
   constructor() {
     extendObservable(this, {
       xPos: null,
+      portalRoom: {},
       yPos: null,
       previousTile:{ x: 0, y: 0 },
       firstRoom: {
@@ -38,6 +40,7 @@ export class UniverseStore {
             default:
               console.log("Not a relevant keyCode");
           }
+          console.log("keystroke")
         })
       }),
 
@@ -46,7 +49,12 @@ export class UniverseStore {
         this.yPos = this.firstRoom.y;
       }),
 
-
+      placePortal: action((grid) => {
+        const { x, y, width, height } = this.portalRoom;
+        let finalX = x + (chop(width) - 1);
+        let finalY = y - (chop(height) - height);
+        grid[finalY][finalX] = { type: 'portal' };
+      }),
     })
   }
 }

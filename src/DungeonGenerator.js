@@ -16,13 +16,13 @@ const placeCells = (grid, {x, y, width = 1, height = 1, id}, type = 'floor') => 
 };
 
 const placeHero = (grid) => {
-  const { xPos, yPos } = UniverseStore;
   grid[firstRoom.y][firstRoom.x] = { type: "hero" };
   return grid;
 }
 
 const growMap = (grid, seedRooms, counter = 1, maxRooms = config.MAX_ROOMS) => {
   if (counter + seedRooms.length > maxRooms || !seedRooms.length) {
+    UniverseStore.portalRoom = seedRooms[seedRooms.length-1];
     return grid;
   }
 

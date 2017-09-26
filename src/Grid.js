@@ -15,16 +15,19 @@ const Dungeon = observer(class Dungeon extends Component {
     this.props.store.trackPosition(this.grid);
   }
 
-  moveCharacter() {
+  moveCharacter(grid) {
     const { xPos, yPos, previousTile } = this.props.store;
     const {x, y} = previousTile;
-    this.grid[yPos][xPos] = { type: "hero"};
-    if (xPos !== x || yPos !== y) this.grid[y][x] = { type: 'floor' };
-    this.grid[0][0] = { type: 'cell' };
+    grid[yPos][xPos] = { type: "hero"};
+    if (xPos !== x || yPos !== y) grid[y][x] = { type: 'floor' };
+    grid[0][0] = { type: 'cell' };
   }
 
   render() {
-    this.moveCharacter();
+    const { placePortal } = this.props.store;
+    this.moveCharacter(this.grid);
+    placePortal(this.grid);
+
     const cells = this.grid.map((el, i) => {
       return(
         <div className="row" key={i + el}>
@@ -32,8 +35,7 @@ const Dungeon = observer(class Dungeon extends Component {
             el.map((cell, i) => {
               return(
                 <div
-                  className={(cell.type === 'floor' || cell.type === 'door' || cell.type === 'hero') ? 'cell ' + cell.type : 'cell'}
-
+                  className={(cell.type === 'floor' || cell.type === 'door' || cell.type === 'hero' || cell.type === 'portal') ? 'cell ' + cell.type : 'cell'}
                   key={i}
                 ></div>
               );
