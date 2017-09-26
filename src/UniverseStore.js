@@ -1,6 +1,7 @@
-import { action, extendObservable } from 'mobx';
+import { action, extendObservable, computed } from 'mobx';
 import _ from 'lodash';
 import config from './gridConfig';
+import { firstRoom, createDungeon, portalRoom } from './DungeonGenerator';
 
 const [min, max] = config.ROOM_SIZE_RANGE;
 const chop = (num) => Math.ceil(num / 2);
@@ -8,53 +9,77 @@ const chop = (num) => Math.ceil(num / 2);
 export class UniverseStore {
   constructor() {
     extendObservable(this, {
-      xPos: null,
+      grid: [],
       portalRoom: {},
-      yPos: null,
+      xPos: 0,
+      yPos: 0,
       previousTile:{ x: 0, y: 0 },
-      firstRoom: {
-          x: _.random(1, config.GRID_WIDTH - max - 15),
-          y: _.random(1, config.GRID_HEIGHT - max - 15),
-          height: _.random(min, max),
-          width: _.random(min, max),
-          id: '0'
-        },
 
-      trackPosition: action((grid) => {
+      makeCurrentDungeon: action(() => {
+        const currentDungeon = createDungeon();
+        this.grid = currentDungeon.grid;
+        this.portalRoom = currentDungeon.portalRoom;
+      }),
+
+      trackPosition: action(() => {
         window.addEventListener('keydown', (e) => {
           e.preventDefault();
-          this.previousTile = { y: this.yPos, x: this.xPos};
+          this.previousTile = { y: this.yPos, x: this.xPos };
           switch (e.keyCode) {
             case 37:
-              if (grid[this.yPos][this.xPos-1].type === 'floor') this.xPos -= 1;
+              if (this.checkNextTile(this.grid[this.yPos][this.xPos-1])) this.xPos -= 1;
               break;
             case 38:
-              if (grid[this.yPos-1][this.xPos].type === 'floor') this.yPos -= 1;
+              if (this.checkNextTile(this.grid[this.yPos-1][this.xPos])) this.yPos -= 1;
               break;
             case 39:
-              if (grid[this.yPos][this.xPos+1].type === 'floor') this.xPos += 1;
+              if (this.checkNextTile(this.grid[this.yPos][this.xPos+1])) this.xPos += 1;
               break;
             case 40:
-              if (grid[this.yPos+1][this.xPos].type === 'floor') this.yPos += 1;
+              if (this.checkNextTile(this.grid[this.yPos+1][this.xPos])) this.yPos += 1;
               break;
             default:
               console.log("Not a relevant keyCode");
           }
-          console.log("keystroke")
+          this.moveCharacter();
         })
       }),
 
+      checkNextTile(nextTile) {
+        switch (nextTile.type) {
+          case 'floor':
+            return true;
+          case 'portal':
+            this.compiledCreation();
+          default:
+             console.log("probably a wall");
+        }
+      },
+
       syncStoreWithPos: action(() => {
-        this.xPos = this.firstRoom.x;
-        this.yPos = this.firstRoom.y;
+        this.xPos = firstRoom.x;
+        this.yPos = firstRoom.y;
       }),
 
-      placePortal: action((grid) => {
+      placePortal: action(() => {
         const { x, y, width, height } = this.portalRoom;
         let finalX = x + (chop(width) - 1);
         let finalY = y - (chop(height) - height);
-        grid[finalY][finalX] = { type: 'portal' };
+        this.grid[finalY][finalX] = { type: 'portal' };
       }),
+
+      moveCharacter: action(() => {
+        const {x, y} = this.previousTile;
+        this.grid[this.yPos][this.xPos] = { type: "hero"};
+        if (this.xPos !== x || this.yPos !== y) this.grid[y][x] = { type: 'floor' };
+        this.grid[0][0] = { type: 'cell' };
+      }),
+
+      compiledCreation: action(() => {
+        this.makeCurrentDungeon();
+        this.syncStoreWithPos();
+        this.placePortal();
+      })
     })
   }
 }

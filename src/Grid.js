@@ -5,30 +5,13 @@ import './styles/Grid.css';
 
 
 const Dungeon = observer(class Dungeon extends Component {
-  constructor(props) {
-    super(props);
-    this.grid = createDungeon();
-    props.store.syncStoreWithPos();
-  }
-
   componentDidMount() {
-    this.props.store.trackPosition(this.grid);
-  }
-
-  moveCharacter(grid) {
-    const { xPos, yPos, previousTile } = this.props.store;
-    const {x, y} = previousTile;
-    grid[yPos][xPos] = { type: "hero"};
-    if (xPos !== x || yPos !== y) grid[y][x] = { type: 'floor' };
-    grid[0][0] = { type: 'cell' };
+    this.props.store.trackPosition();
+    this.props.store.compiledCreation();
   }
 
   render() {
-    const { placePortal } = this.props.store;
-    this.moveCharacter(this.grid);
-    placePortal(this.grid);
-
-    const cells = this.grid.map((el, i) => {
+    const cells = this.props.store.grid.map((el, i) => {
       return(
         <div className="row" key={i + el}>
           {
