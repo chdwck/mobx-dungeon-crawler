@@ -49,6 +49,9 @@ export class UniverseStore {
         switch (nextTile.type) {
           case 'floor':
             return true;
+          case 'monster':
+            return this.fightMonster(nextTile.monsterClass);
+            break;
           case 'portal':
             this.compiledCreation();
           default:
@@ -73,6 +76,11 @@ export class UniverseStore {
         this.grid[this.yPos][this.xPos] = { type: "hero"};
         if (this.xPos !== x || this.yPos !== y) this.grid[y][x] = { type: 'floor' };
         this.grid[0][0] = { type: 'cell' };
+      }),
+
+      fightMonster: action((monster) => {
+        console.log(monster.name);
+        return true;
       }),
 
       compiledCreation: action(() => {

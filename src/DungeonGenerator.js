@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import UniverseStore from './UniverseStore';
 import config from './gridConfig';
+import Monsters from './characters/Monsters';
 
 const [min, max] = config.ROOM_SIZE_RANGE;
 
@@ -15,7 +16,8 @@ export const firstRoom = {
 const placeCells = (grid, {x, y, width = 1, height = 1, id}, type = 'floor') => {
   for (let i = y; i < y + height; i++) {
     for (let j = x; j < x + width; j++) {
-      grid[i][j] = {type, id};
+      let mIndex = _.random(0, 3);
+      (_.random(1, 100) < 9) ? grid[i][j] = { type: 'monster', monsterClass:Monsters[mIndex], id} : grid[i][j] = {type, id};
     }
   }
   return grid;
