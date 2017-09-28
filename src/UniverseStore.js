@@ -1,6 +1,7 @@
 import { action, extendObservable, computed } from 'mobx';
 import _ from 'lodash';
 import config from './gridConfig';
+import TheHero from './characters/TheHero';
 import { firstRoom, createDungeon, portalRoom } from './DungeonGenerator';
 
 const [min, max] = config.ROOM_SIZE_RANGE;
@@ -9,6 +10,7 @@ const chop = (num) => Math.ceil(num / 2);
 export class UniverseStore {
   constructor() {
     extendObservable(this, {
+      hero: TheHero,
       grid: [],
       portalRoom: {},
       xPos: 0,
@@ -79,14 +81,27 @@ export class UniverseStore {
       }),
 
       fightMonster: action((monster) => {
-        console.log(monster.name);
-        return true;
+        monster.health -= this.hero.atk;
+        if (monster.health < 0) {
+          return true;
+        } else if(this.hero.health < 0){
+          alert('You died');
+          this.resetGame();
+        } else {
+          this.hero.health -= monster.atk;
+          console.log("the hero's health is " + this.hero.health);
+          this.fightMonster(monster);
+        }
       }),
 
       compiledCreation: action(() => {
         this.makeCurrentDungeon();
         this.syncStoreWithPos();
-        this.placePortal();
+        // this.placePortal();
+      }),
+      resetGame: action(() => {
+        this.compiledCreation();
+        this.hero = TheHero;
       })
     })
   }

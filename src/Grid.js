@@ -20,7 +20,7 @@ const Dungeon = observer(class Dungeon extends Component {
                 <div
                   className={(cell.type === 'floor' || cell.type === 'door' || cell.type === 'hero' || cell.type === 'portal' || cell.type === "monster") ? 'cell ' + cell.type : 'cell'}
                   key={i}
-                ></div>
+                >{cell.id}</div>
               );
             })
           }

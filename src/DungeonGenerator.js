@@ -16,8 +16,9 @@ export const firstRoom = {
 const placeCells = (grid, {x, y, width = 1, height = 1, id}, type = 'floor') => {
   for (let i = y; i < y + height; i++) {
     for (let j = x; j < x + width; j++) {
-      let mIndex = _.random(0, 3);
-      (_.random(1, 100) < 9) ? grid[i][j] = { type: 'monster', monsterClass:Monsters[mIndex], id} : grid[i][j] = {type, id};
+      // let mIndex = _.random(0, 3);
+      // (_.random(1, 100) < 9) ? grid[i][j] = { type: 'monster', monsterClass:Monsters[mIndex], id} : grid[i][j] = {type, id};
+      grid[i][j] = {type, id};
     }
   }
   return grid;
@@ -70,6 +71,7 @@ const createRoomsFromSeed = (grid, {x, y, width, height}, range = config.ROOM_SI
 		north.y = y - north.height - 1;
 		north.doorx = _.random(north.x, (Math.min(north.x + north.width, x + width)) - 1);
 		north.doory = y - 1;
+    north.monsterA = { x: north.x, y: north.y}
 		north.id='N';
 		roomValues.push(north);
 
@@ -78,7 +80,8 @@ const createRoomsFromSeed = (grid, {x, y, width, height}, range = config.ROOM_SI
 		east.y = _.random(y, height + y - 1);
 		east.doorx = east.x - 1;
 		east.doory = _.random(east.y, (Math.min(east.y + east.height, y + height)) - 1);
-		east.id='E';
+    east.monsterA = { x: east.x, y: east.y}
+    east.id='E';
 		roomValues.push(east);
 
 		const south = { height: _.random(min, max), width: _.random(min, max) };
@@ -86,6 +89,7 @@ const createRoomsFromSeed = (grid, {x, y, width, height}, range = config.ROOM_SI
 		south.y = y + height + 1;
 		south.doorx = _.random(south.x, (Math.min(south.x + south.width, x + width)) - 1);
 		south.doory = y + height;
+    south.monsterA = { x: south.x, y: south.y}
 		south.id='S';
 		roomValues.push(south);
 
@@ -94,7 +98,8 @@ const createRoomsFromSeed = (grid, {x, y, width, height}, range = config.ROOM_SI
 		west.y = _.random(y, height + y - 1);
 		west.doorx = x - 1;
 		west.doory = _.random(west.y, (Math.min(west.y + west.height, y + height)) - 1);
-		west.id='W';
+    west.monsterA = { x: west.x, y: west.y}
+    west.id='W';
 		roomValues.push(west);
 
 		const placedRooms = [];
@@ -102,6 +107,7 @@ const createRoomsFromSeed = (grid, {x, y, width, height}, range = config.ROOM_SI
 			if (isValidRoomPlacement(grid, room)) {
 				grid = placeCells(grid, room);
 				grid = placeCells(grid, {x: room.doorx, y: room.doory}, 'floor');
+        grid = placeCells(grid, {x: room.monsterA.x, y: room.monsterA.y}, 'monster');
 				placedRooms.push(room);
 			}
 		});
