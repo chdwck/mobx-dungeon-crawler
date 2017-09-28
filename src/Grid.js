@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { createDungeon } from './DungeonGenerator';
 import { observer } from 'mobx-react';
 import './styles/Grid.css';
 
@@ -18,9 +17,9 @@ const Dungeon = observer(class Dungeon extends Component {
             el.map((cell, i) => {
               return(
                 <div
-                  className={(cell.type === 'floor' || cell.type === 'door' || cell.type === 'hero' || cell.type === 'portal' || cell.type === "monster") ? 'cell ' + cell.type : 'cell'}
+                  className={cell.type + ' cell'}
                   key={i}
-                >{cell.id}</div>
+                ></div>
               );
             })
           }

@@ -1,10 +1,7 @@
-import { action, extendObservable, computed } from 'mobx';
-import _ from 'lodash';
-import config from './gridConfig';
+import { action, extendObservable } from 'mobx';
 import TheHero from './characters/TheHero';
-import { firstRoom, createDungeon, portalRoom } from './DungeonGenerator';
+import { firstRoom, createDungeon} from './DungeonGenerator';
 
-const [min, max] = config.ROOM_SIZE_RANGE;
 const chop = (num) => Math.ceil(num / 2);
 
 export class UniverseStore {
@@ -53,9 +50,11 @@ export class UniverseStore {
             return true;
           case 'monster':
             return this.fightMonster(nextTile.monsterClass);
-            break;
+          case 'health':
+            return this.pickUpHealth(nextTile.healthAmt);
           case 'portal':
             this.compiledCreation();
+            break;
           default:
              console.log("probably a wall");
         }
@@ -64,6 +63,11 @@ export class UniverseStore {
       syncStoreWithPos: action(() => {
         this.xPos = firstRoom.x;
         this.yPos = firstRoom.y;
+      }),
+
+      pickUpHealth: action((healthAmt) => {
+        this.hero.health += healthAmt;
+        return true;
       }),
 
       placePortal: action(() => {
@@ -97,7 +101,7 @@ export class UniverseStore {
       compiledCreation: action(() => {
         this.makeCurrentDungeon();
         this.syncStoreWithPos();
-        // this.placePortal();
+        this.placePortal();
       }),
       resetGame: action(() => {
         this.compiledCreation();

@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import UniverseStore from './UniverseStore';
 import config from './gridConfig';
 import Monsters from './characters/Monsters';
 
@@ -16,9 +15,20 @@ export const firstRoom = {
 const placeCells = (grid, {x, y, width = 1, height = 1, id}, type = 'floor') => {
   for (let i = y; i < y + height; i++) {
     for (let j = x; j < x + width; j++) {
-      // let mIndex = _.random(0, 3);
-      // (_.random(1, 100) < 9) ? grid[i][j] = { type: 'monster', monsterClass:Monsters[mIndex], id} : grid[i][j] = {type, id};
-      grid[i][j] = {type, id};
+      let mIndex = _.random(0, 3);
+      switch (type) {
+        case 'floor':
+          grid[i][j] = { type, id };
+          break;
+        case 'monster':
+          grid[i][j] = { type, monsterClass: Monsters[mIndex] };
+          break;
+        case 'health':
+          grid[i][j] = { type, healthAmt: 10 };
+          break;
+        default:
+          console.log('Not an option');
+      }
     }
   }
   return grid;
@@ -32,11 +42,9 @@ const placeHero = (grid) => {
 const growMap = (grid, seedRooms, counter = 1, maxRooms = config.MAX_ROOMS) => {
   if (counter + seedRooms.length > maxRooms || !seedRooms.length) {
     const portalRoom = seedRooms[seedRooms.length - 1]
-    console.log(seedRooms);
     return { grid, portalRoom }
   }
   else {
-    console.log("ran again");
       grid = createRoomsFromSeed(grid, seedRooms.pop());
       seedRooms.push(...grid.placedRooms);
       counter += grid.placedRooms.length;
@@ -62,7 +70,6 @@ const isValidRoomPlacement = (grid, {x, y, width = 1, height = 1}) => {
   return true;
 }
 
-
 const createRoomsFromSeed = (grid, {x, y, width, height}, range = config.ROOM_SIZE_RANGE) => {
 		const [min, max] = range;
 	  const roomValues = [];
@@ -71,7 +78,18 @@ const createRoomsFromSeed = (grid, {x, y, width, height}, range = config.ROOM_SI
 		north.y = y - north.height - 1;
 		north.doorx = _.random(north.x, (Math.min(north.x + north.width, x + width)) - 1);
 		north.doory = y - 1;
-    north.monsterA = { x: north.x, y: north.y}
+    north.monsterA = {
+      x:_.random(north.x + 1, north.x + north.width - 1),
+      y:_.random(north.y, north.y + north.height -1)
+    };
+    north.monsterB = {
+      x:_.random(north.x, north.x +north.width - 1),
+      y:_.random(north.y, north.y + north.height -1)
+     };
+    north.healthPu = {
+      x:_.random(north.x, north.x +north.width - 1),
+      y:_.random(north.y, north.y + north.height -1)
+    };
 		north.id='N';
 		roomValues.push(north);
 
@@ -80,7 +98,18 @@ const createRoomsFromSeed = (grid, {x, y, width, height}, range = config.ROOM_SI
 		east.y = _.random(y, height + y - 1);
 		east.doorx = east.x - 1;
 		east.doory = _.random(east.y, (Math.min(east.y + east.height, y + height)) - 1);
-    east.monsterA = { x: east.x, y: east.y}
+    east.monsterA = {
+      x:_.random(east.x, east.x + east.width - 1),
+      y:_.random(east.y, east.y + east.height -1)
+    };
+    east.monsterB = {
+      x:_.random(east.x, east.x + east.width - 1),
+      y:_.random(east.y, east.y + east.height -1)
+     };
+     east.healthPu = {
+       x:_.random(east.x, east.x + east.width - 1),
+       y:_.random(east.y, east.y + east.height -1)
+      };
     east.id='E';
 		roomValues.push(east);
 
@@ -89,7 +118,18 @@ const createRoomsFromSeed = (grid, {x, y, width, height}, range = config.ROOM_SI
 		south.y = y + height + 1;
 		south.doorx = _.random(south.x, (Math.min(south.x + south.width, x + width)) - 1);
 		south.doory = y + height;
-    south.monsterA = { x: south.x, y: south.y}
+    south.monsterA = {
+      x:_.random(south.x, south.x + south.width - 1),
+      y:_.random(south.y + 1, south.y + south.height -1)
+    };
+    south.monsterB = {
+      x:_.random(south.x, south.x + south.width - 1),
+      y:_.random(south.y, south.y + south.height -1)
+     };
+     south.healthPu = {
+       x:_.random(south.x, south.x + south.width - 1),
+       y:_.random(south.y, south.y + south.height -1)
+      };
 		south.id='S';
 		roomValues.push(south);
 
@@ -98,7 +138,18 @@ const createRoomsFromSeed = (grid, {x, y, width, height}, range = config.ROOM_SI
 		west.y = _.random(y, height + y - 1);
 		west.doorx = x - 1;
 		west.doory = _.random(west.y, (Math.min(west.y + west.height, y + height)) - 1);
-    west.monsterA = { x: west.x, y: west.y}
+    west.monsterA = {
+      x:_.random(west.x, west.x + west.width - 1),
+      y:_.random(west.y, west.y + west.height -1)
+     };
+    west.monsterB = {
+      x:_.random(west.x, west.x + west.width - 1),
+      y:_.random(west.y, west.y + west.height -1)
+    };
+    west.healthPu = {
+      x:_.random(west.x, west.x + west.width - 1),
+      y:_.random(west.y, west.y + west.height -1)
+    };
     west.id='W';
 		roomValues.push(west);
 
@@ -107,7 +158,9 @@ const createRoomsFromSeed = (grid, {x, y, width, height}, range = config.ROOM_SI
 			if (isValidRoomPlacement(grid, room)) {
 				grid = placeCells(grid, room);
 				grid = placeCells(grid, {x: room.doorx, y: room.doory}, 'floor');
-        grid = placeCells(grid, {x: room.monsterA.x, y: room.monsterA.y}, 'monster');
+        grid = placeCells(grid, room.monsterA, 'monster');
+        grid = placeCells(grid, room.monsterB, 'monster');
+        grid = placeCells(grid, room.healthPu, 'health');
 				placedRooms.push(room);
 			}
 		});
