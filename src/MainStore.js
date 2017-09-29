@@ -1,6 +1,7 @@
 import { action, extendObservable } from 'mobx';
 import TheHero from './characters/TheHero';
 import { firstRoom, createDungeon} from './DungeonGenerator';
+import FinalBoss from './characters/finalBoss';
 
 const chop = (num) => Math.ceil(num / 2);
 
@@ -13,6 +14,7 @@ export class MainStore {
       xPos: 0,
       yPos: 0,
       previousTile:{ x: 0, y: 0 },
+      currentLevel: 1,
 
       makeCurrentDungeon: action(() => {
         const currentDungeon = createDungeon();
@@ -53,6 +55,7 @@ export class MainStore {
           case 'health':
             return this.pickUpHealth(nextTile.healthAmt);
           case 'portal':
+            this.currentLevel++;
             this.compiledCreation();
             break;
           default:
@@ -77,6 +80,27 @@ export class MainStore {
         this.grid[finalY][finalX] = { type: 'portal' };
       }),
 
+      placeBossRoom: action(() => {
+        const { x, y, width, height } = this.portalRoom;
+        const { BossHeight, BossWidth, stats } = FinalBoss;
+        this.prepareBossRoom(x, y, width, height);
+        let finalX = x + (chop(width) - 1);
+        let finalY = y - (chop(height) - height);
+        for (let i = finalY; i < BossHeight + finalY; i++) {
+          for (let j = finalX; j < BossWidth + finalX; j++) {
+            this.grid[i][j] = { type: 'Boss', monsterClass: stats }
+          }
+        }
+
+      }),
+      prepareBossRoom: action((x, y, width, height) => {
+        for (let i = y; i < y + height + 1; i++){
+          for (let j = x; j < x + width + 1; j++){
+            this.grid[i][j] = {type: 'floor', id: 'P' }
+          }
+        }
+      }),
+
       moveCharacter: action(() => {
         const {x, y} = this.previousTile;
         this.grid[this.yPos][this.xPos] = { type: "hero"};
@@ -85,27 +109,29 @@ export class MainStore {
       }),
 
       fightMonster: action((monster) => {
-        monster.health -= this.hero.atk;
-        if (monster.health < 0) {
+          monster.health -= this.hero.atk;
+          this.hero.health -= monster.atk;
+        if (monster.health <= 0) {
+          this.hero.exp += monster.expGain;
           return true;
-        } else if(this.hero.health < 0){
+        } else if(this.hero.health <= 0){
           alert('You died');
           this.resetGame();
         } else {
-          this.hero.health -= monster.atk;
-          console.log("the hero's health is " + this.hero.health);
-          this.fightMonster(monster);
-        }
+          this.hero.health -= monster.atk;        }
       }),
 
       compiledCreation: action(() => {
         this.makeCurrentDungeon();
         this.syncStoreWithPos();
-        this.placePortal();
+        (this.currentLevel === 2)
+          ? this.placeBossRoom() : this.placePortal();
+
       }),
       resetGame: action(() => {
         this.compiledCreation();
         this.hero = TheHero;
+        this.currentLevel = 1;
       })
     })
   }

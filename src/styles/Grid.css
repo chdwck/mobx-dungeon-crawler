@@ -18,7 +18,6 @@
   height: 1em;
   width: 1em;
   border: 1px solid transparent;
-  background: #2A3132;
 }
 
 .floor {
@@ -36,4 +35,7 @@
 }
 .health {
   background: blue;
+}
+.Boss {
+  background: yellow;
 }

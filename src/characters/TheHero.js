@@ -1,7 +1,7 @@
 const TheHero = {
     currentWeapon: 'Bare fists',
-    atk: 10,
-    health: 100,
+    atk: 100000,
+    health: 1000000000000,
     exp: 0
 };
 

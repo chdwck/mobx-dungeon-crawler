@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import registerServiceWorker from './registerServiceWorker';
 import MainStore from './MainStore';
-import Grid from './Grid';
+import App from './App';
 
-ReactDOM.render(<Grid store={ MainStore }/>, document.getElementById('root'));
+ReactDOM.render(<App store={ MainStore }/>, document.getElementById('root'));
 registerServiceWorker();
