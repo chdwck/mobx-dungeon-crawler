@@ -9,6 +9,7 @@ export class MainStore {
   constructor() {
     extendObservable(this, {
       hero: TheHero,
+      boss: FinalBoss.stats,
       grid: [],
       portalRoom: {},
       xPos: 0,
@@ -52,6 +53,9 @@ export class MainStore {
             return true;
           case 'monster':
             return this.fightMonster(nextTile.monsterClass);
+          case 'Boss':
+            this.fightBoss();
+            break;
           case 'health':
             return this.pickUpHealth(nextTile.healthAmt);
           case 'portal':
@@ -117,8 +121,13 @@ export class MainStore {
         } else if(this.hero.health <= 0){
           alert('You died');
           this.resetGame();
-        } else {
-          this.hero.health -= monster.atk;        }
+        }
+      }),
+
+      fightBoss: action(() => {
+        if (this.fightMonster(this.boss)) {
+          alert('You win!');
+        }
       }),
 
       compiledCreation: action(() => {
@@ -126,7 +135,6 @@ export class MainStore {
         this.syncStoreWithPos();
         (this.currentLevel === 2)
           ? this.placeBossRoom() : this.placePortal();
-
       }),
       resetGame: action(() => {
         this.compiledCreation();
