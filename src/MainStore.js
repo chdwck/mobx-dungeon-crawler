@@ -4,7 +4,7 @@ import { firstRoom, createDungeon} from './DungeonGenerator';
 
 const chop = (num) => Math.ceil(num / 2);
 
-export class UniverseStore {
+export class MainStore {
   constructor() {
     extendObservable(this, {
       hero: TheHero,
@@ -111,4 +111,4 @@ export class UniverseStore {
   }
 }
 
-export default new UniverseStore();
+export default new MainStore();

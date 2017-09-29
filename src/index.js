@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import registerServiceWorker from './registerServiceWorker';
-import UniverseStore from './UniverseStore';
+import MainStore from './MainStore';
 import Grid from './Grid';
 
-ReactDOM.render(<Grid store={ UniverseStore }/>, document.getElementById('root'));
+ReactDOM.render(<Grid store={ MainStore }/>, document.getElementById('root'));
 registerServiceWorker();
