@@ -125,15 +125,17 @@ export class MainStore {
       }),
 
       fightBoss: action(() => {
-        if (this.fightMonster(this.boss)) {
-          alert('You win!');
+        this.fightMonster(this.boss);
+        if (this.boss.health <= 0) {
+          alert('You win');
+          this.resetGame();
         }
       }),
 
       compiledCreation: action(() => {
         this.makeCurrentDungeon();
         this.syncStoreWithPos();
-        (this.currentLevel === 2)
+        (this.currentLevel === 1)
           ? this.placeBossRoom() : this.placePortal();
       }),
       resetGame: action(() => {
