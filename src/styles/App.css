@@ -1,0 +1,17 @@
+html, body, #root {
+  margin: 0;
+  height: 100vh;
+}
+
+.HudAndGrid {
+  display: flex;
+}
+.Hud {
+  margin: 10%;
+}
+.Footer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}

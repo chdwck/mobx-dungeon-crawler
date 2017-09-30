@@ -1,4 +1,4 @@
-import { action, extendObservable } from 'mobx';
+import { action, extendObservable, autorun } from 'mobx';
 import TheHero from './characters/TheHero';
 import { firstRoom, createDungeon} from './DungeonGenerator';
 import FinalBoss from './characters/finalBoss';
@@ -68,6 +68,7 @@ export class MainStore {
       },
 
       syncStoreWithPos: action(() => {
+        console.log("This has been called");
         this.xPos = firstRoom.x;
         this.yPos = firstRoom.y;
       }),
@@ -115,13 +116,15 @@ export class MainStore {
       fightMonster: action((monster) => {
           monster.health -= this.hero.atk;
           this.hero.health -= monster.atk;
-        if (monster.health <= 0) {
-          this.hero.exp += monster.expGain;
-          return true;
-        } else if(this.hero.health <= 0){
-          alert('You died');
-          this.resetGame();
-        }
+          if (this.hero.health <= 0) {
+            alert('You died.');
+            this.resetGame();
+          }
+          else if (monster.health <= 0) {
+            this.hero.exp += monster.expGain;
+            return true;
+          }
+
       }),
 
       fightBoss: action(() => {
@@ -139,6 +142,7 @@ export class MainStore {
           ? this.placeBossRoom() : this.placePortal();
       }),
       resetGame: action(() => {
+        this.grid[this.yPos][this.xPos] = {type: 'floor'};
         this.compiledCreation();
         this.hero = TheHero;
         this.currentLevel = 1;
