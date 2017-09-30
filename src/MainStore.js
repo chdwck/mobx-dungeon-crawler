@@ -1,4 +1,4 @@
-import { action, extendObservable, autorun } from 'mobx';
+import { action, extendObservable } from 'mobx';
 import TheHero from './characters/TheHero';
 import { firstRoom, createDungeon} from './DungeonGenerator';
 import FinalBoss from './characters/finalBoss';
