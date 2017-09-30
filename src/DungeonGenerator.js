@@ -21,7 +21,7 @@ const placeCells = (grid, {x, y, width = 1, height = 1, id}, type = 'floor') => 
           grid[i][j] = { type, id };
           break;
         case 'monster':
-          grid[i][j] = { type, monsterClass: Monsters[mIndex] };
+          grid[i][j] = { type, monsterClass: Monsters[mIndex], x:j, y:i};
           break;
         case 'health':
           grid[i][j] = { type, healthAmt: 10 };

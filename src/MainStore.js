@@ -1,4 +1,4 @@
-import { action, extendObservable } from 'mobx';
+import { action, extendObservable, computed } from 'mobx';
 import TheHero from './characters/TheHero';
 import { firstRoom, createDungeon} from './DungeonGenerator';
 import FinalBoss from './characters/finalBoss';
@@ -15,7 +15,16 @@ export class MainStore {
       xPos: 0,
       yPos: 0,
       previousTile:{ x: 0, y: 0 },
-      currentLevel: 1,
+      gameLevel: 1,
+      playerLevel: computed(() => {
+        let exp = this.hero.exp;
+        let level=1;
+        while (exp > 100) {
+          exp -= (level * 100);
+          if (exp >= 0) level++;
+        }
+        return level;
+      }),
 
       makeCurrentDungeon: action(() => {
         const currentDungeon = createDungeon();
@@ -40,37 +49,39 @@ export class MainStore {
             case 40:
               if (this.checkNextTile(this.grid[this.yPos+1][this.xPos])) this.yPos += 1;
               break;
-            default:
-              console.log("Not a relevant keyCode");
           }
           this.moveCharacter();
         })
       }),
 
-      checkNextTile(nextTile) {
+      checkNextTile: action((nextTile) => {
         switch (nextTile.type) {
           case 'floor':
             return true;
           case 'monster':
-            return this.fightMonster(nextTile.monsterClass);
+            return this.fightMonster(nextTile);
           case 'Boss':
             this.fightBoss();
             break;
           case 'health':
             return this.pickUpHealth(nextTile.healthAmt);
+          case 'weapon':
+            return this.pickUpWeapon(nextTile.weapon);
           case 'portal':
-            this.currentLevel++;
+            this.gameLevel++;
             this.compiledCreation();
             break;
-          default:
-             console.log("probably a wall");
         }
-      },
+      }),
+
+      pickUpWeapon:action((weapon) => {
+        return true;
+      }),
 
       syncStoreWithPos: action(() => {
-        console.log("This has been called");
         this.xPos = firstRoom.x;
         this.yPos = firstRoom.y;
+        this.grid[0][0] = { type: 'cell' };
       }),
 
       pickUpHealth: action((healthAmt) => {
@@ -110,10 +121,11 @@ export class MainStore {
         const {x, y} = this.previousTile;
         this.grid[this.yPos][this.xPos] = { type: "hero"};
         if (this.xPos !== x || this.yPos !== y) this.grid[y][x] = { type: 'floor' };
-        this.grid[0][0] = { type: 'cell' };
       }),
 
-      fightMonster: action((monster) => {
+      fightMonster: action((tile) => {
+        console.log(tile.x, tile.y);
+          const monster = tile.monsterClass;
           monster.health -= this.hero.atk;
           this.hero.health -= monster.atk;
           if (this.hero.health <= 0) {
@@ -122,9 +134,19 @@ export class MainStore {
           }
           else if (monster.health <= 0) {
             this.hero.exp += monster.expGain;
-            return true;
+            return this.weaponDrop(tile);
           }
 
+      }),
+
+      weaponDrop: action((tile) => {
+        const { x,y } = tile;
+        if (Math.random() * 100 < 40) {
+          console.log('fired');
+          this.grid[y][x] = { type: 'weapon' };
+          return false;
+        }
+        return true;
       }),
 
       fightBoss: action(() => {
@@ -138,14 +160,13 @@ export class MainStore {
       compiledCreation: action(() => {
         this.makeCurrentDungeon();
         this.syncStoreWithPos();
-        (this.currentLevel === 1)
+        (this.gameLevel === 5)
           ? this.placeBossRoom() : this.placePortal();
       }),
       resetGame: action(() => {
-        this.grid[this.yPos][this.xPos] = {type: 'floor'};
         this.compiledCreation();
         this.hero = TheHero;
-        this.currentLevel = 1;
+        this.gameLevel = 1;
       })
     })
   }

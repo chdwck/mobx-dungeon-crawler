@@ -9,7 +9,7 @@ const Hud = observer(class Hud extends Component {
         <h1>{"Health: " + health}</h1>
         <h1>{"Weapon: " + currentWeapon}</h1>
         <h1>{"AtkPwr: " + atk}</h1>
-        <h1>{"Exp: " + exp}</h1>
+        <h1>{"Level: " + this.props.store.playerLevel}</h1>
         <p>{"Exp till next level"}</p>
       </div>
     );
