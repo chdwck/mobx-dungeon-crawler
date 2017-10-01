@@ -14,8 +14,8 @@
 }
 
 .cell {
-  height: 1em;
-  width: 1em;
+  height: 1.2em;
+  width: 1.2em;
   border: 1px solid transparent;
   background: black;
 }
@@ -28,7 +28,8 @@
 }
 
 .portal {
-  background: red;
+  background-image:url("../gameElements/dngn_blue_fountain.png"), url("../gameElements/ice2.png");
+  background-size: contain;
 }
 .ArachnaDemos {
   background-image:url("../gameElements/redback.png"), url("../gameElements/ice2.png");
@@ -49,7 +50,8 @@
   background-size: contain;
 }
 .health {
-  background: blue;
+  background-image:url("../gameElements/i-heal.png"), url("../gameElements/ice2.png");
+  background-size: contain;
 }
 
 .Boss {
@@ -67,7 +69,8 @@ img {
 
 }
 .weapon {
-  background: brown;
+  background-image:url("../gameElements/unseen_item.png"), url("../gameElements/ice2.png");
+  background-size: contain;
 }
 .wall {
   background-image: url("../gameElements/cobble_blood8.png");
