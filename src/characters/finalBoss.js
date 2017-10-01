@@ -1,7 +1,7 @@
 export const finalBoss = {
   name: 'Cthulu',
-  BossHeight: 2,
-  BossWidth: 2,
+  BossHeight: 4,
+  BossWidth: 5,
   stats: {
     atk: 200,
     health: 1100,

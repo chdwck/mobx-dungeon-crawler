@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import '../styles/Grid.css';
-
+import Cthulu from '../gameElements/cthulu.png';
 
 const Dungeon = observer(class Dungeon extends Component {
   componentDidMount() {
@@ -15,11 +15,16 @@ const Dungeon = observer(class Dungeon extends Component {
         <div className="row" key={i + el}>
           {
             el.map((cell, i) => {
+
               return(
                 <div
                   className={cell.type + " cell"}
                   key={i}
-                ></div>
+                >
+                  {
+                    (cell.type === "Boss") ? <img src={Cthulu} /> : null
+                  }
+                </div>
               );
             })
           }

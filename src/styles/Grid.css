@@ -17,10 +17,11 @@
   height: 1em;
   width: 1em;
   border: 1px solid transparent;
+  background: black;
 }
 
 .floor {
-  background: #d6d1d1;
+  background-image: url("../gameElements/ice2.png");
 }
 .hero {
   background: green;
@@ -29,15 +30,46 @@
 .portal {
   background: red;
 }
-.monster {
-  background: purple;
+.ArachnaDemos {
+  background-image:url("../gameElements/redback.png"), url("../gameElements/ice2.png");
+  background-size: contain;
+}
+
+.Abomination {
+  background-image:url("../gameElements/abomination_large1.png"), url("../gameElements/ice2.png");
+  background-size: contain;
+}
+.Skraw{
+  background-image:url("../gameElements/hell_knight.png"), url("../gameElements/ice2.png");
+  background-size: contain;
+}
+
+.Mygo {
+  background-image:url("../gameElements/giant_mosquito.png"), url("../gameElements/ice2.png");
+  background-size: contain;
 }
 .health {
   background: blue;
 }
+
 .Boss {
-  background: yellow;
+  overflow: visible;
+  background-image: url("../gameElements/ice2.png");
+}
+
+.BossArea {
+  background-image: url("../gameElements/ice2.png");
+}
+
+img {
+  position: absolute;
+  z-index: 3;
+
 }
 .weapon {
   background: brown;
+}
+.wall {
+  background-image: url("../gameElements/cobble_blood8.png");
+  border-radius: 10%;
 }

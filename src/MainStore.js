@@ -1,6 +1,6 @@
 import { action, extendObservable, computed } from 'mobx';
 import TheHero from './characters/TheHero';
-import { firstRoom, createDungeon} from './DungeonGenerator';
+import { firstRoom, createDungeon, placeWalls} from './DungeonGenerator';
 import FinalBoss from './characters/finalBoss';
 
 const chop = (num) => Math.ceil(num / 2);
@@ -19,11 +19,19 @@ export class MainStore {
       playerLevel: computed(() => {
         let exp = this.hero.exp;
         let level=1;
-        while (exp > 100) {
+        while (exp >= 100) {
           exp -= (level * 100);
           if (exp >= 0) level++;
         }
         return level;
+      }),
+
+      expTillNext: computed(() => {
+        let total = 0;
+        for (let i = 1; i <= this.playerLevel; i++) {
+          total += (i * 100);
+        }
+        return total - this.hero.exp;
       }),
 
       makeCurrentDungeon: action(() => {
@@ -55,12 +63,17 @@ export class MainStore {
       }),
 
       checkNextTile: action((nextTile) => {
+        const monster = "Mygo" || "Abomination" || "Skraw" || "ArachnaDemos";
         switch (nextTile.type) {
           case 'floor':
             return true;
-          case 'monster':
+          case "Mygo":
+          case "Abomination":
+          case "Skraw":
+          case "ArachnaDemos":
             return this.fightMonster(nextTile);
           case 'Boss':
+          case 'BossArea':
             this.fightBoss();
             break;
           case 'health':
@@ -90,6 +103,10 @@ export class MainStore {
       }),
 
       placePortal: action(() => {
+        if (this.portalRoom === undefined) {
+          this.compiledCreation();
+          return null;
+        }
         const { x, y, width, height } = this.portalRoom;
         let finalX = x + (chop(width) - 1);
         let finalY = y - (chop(height) - height);
@@ -97,22 +114,27 @@ export class MainStore {
       }),
 
       placeBossRoom: action(() => {
+        if (this.portalRoom === undefined) {
+          this.compiledCreation();
+          return null;
+        }
         const { x, y, width, height } = this.portalRoom;
         const { BossHeight, BossWidth, stats } = FinalBoss;
         this.prepareBossRoom(x, y, width, height);
-        let finalX = x + (chop(width) - 1);
+        let finalX = x + (chop(width)) - 2;
         let finalY = y - (chop(height) - height);
         for (let i = finalY; i < BossHeight + finalY; i++) {
           for (let j = finalX; j < BossWidth + finalX; j++) {
-            this.grid[i][j] = { type: 'Boss', monsterClass: stats }
+            this.grid[i][j] = { type: 'BossArea', monsterClass: stats }
           }
         }
-
+        this.grid[finalY][finalX] = {type: 'Boss', monsterClass: stats}
       }),
       prepareBossRoom: action((x, y, width, height) => {
-        for (let i = y; i < y + height + 1; i++){
-          for (let j = x; j < x + width + 1; j++){
-            this.grid[i][j] = {type: 'floor', id: 'P' }
+        for (let i = y; i < y + height + 2; i++){
+          for (let j = x; j < x + width + 2; j++){
+            placeWalls(this.grid, i , j);
+            this.grid[i][j] = {type: 'floor', id: 'P' };
           }
         }
       }),

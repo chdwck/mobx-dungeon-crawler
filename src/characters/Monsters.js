@@ -14,14 +14,14 @@ const Monsters = [
     desc: 'Undead Knight that seeks to steal your soul.'
   },
   {
-    name: 'Altylite',
+    name: 'ArachnaDemos',
     atk: 40,
     health: 30,
     expGain: 50,
     desc: 'Giant demonic spider that spits acid and slurps entrails.'
   },
   {
-    name: 'Mescatalyn',
+    name: 'Abomination',
     atk: 60,
     health: 60,
     expGain: 120,

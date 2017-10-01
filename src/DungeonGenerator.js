@@ -12,16 +12,29 @@ export const firstRoom = {
       id: '0'
     };
 
+export const placeWalls = (grid, y, x) => {
+  while (grid === undefined) {console.log('waiting, waiting, waiting')}
+  for (let i = y - 1; i <= y + 1; i++ ) {
+    for (let j = x -1; j <= x + 1; j++) {
+      if (grid[i] !== undefined && grid[i][j].type === 0 && grid[i][j] !== undefined) {
+        grid[i][j] = { type: "wall" }
+      }
+    }
+  }
+};
+
 const placeCells = (grid, {x, y, width = 1, height = 1, id}, type = 'floor') => {
   for (let i = y; i < y + height; i++) {
     for (let j = x; j < x + width; j++) {
       let mIndex = _.random(0, 3);
       switch (type) {
         case 'floor':
+          placeWalls(grid, i, j);
           grid[i][j] = { type, id };
           break;
         case 'monster':
-          grid[i][j] = { type, monsterClass: Monsters[mIndex], x:j, y:i};
+          const mon = Monsters[mIndex];
+          grid[i][j] = { type: mon.name, monsterClass: mon, x:j, y:i};
           break;
         case 'health':
           grid[i][j] = { type, healthAmt: 10 };
@@ -53,10 +66,10 @@ const growMap = (grid, seedRooms, counter = 1, maxRooms = config.MAX_ROOMS) => {
 };
 
 const isValidRoomPlacement = (grid, {x, y, width = 1, height = 1}) => {
-  if (y < 1 || y + height > grid.length - 1 ) {
+  if (y < 1 || y + height + 1 > grid.length - 1 ) {
     return false;
   }
-  else if (x < 1 || x + width > grid[0].length -1) {
+  else if (x < 1 || x + width + 1 > grid[0].length -1) {
     return false;
   }
 
@@ -173,7 +186,7 @@ export const createDungeon = () => {
   for (let i = 0; i < config.GRID_HEIGHT; i++) {
     grid.push([]);
     for (let j = 0; j< config.GRID_WIDTH; j++) {
-      grid[i].push({type: 0, opacity: _.random(0.3, 0.8)});
+      grid[i].push({type: 0});
     }
   }
   grid = placeCells(grid, firstRoom);
