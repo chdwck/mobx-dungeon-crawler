@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 
 const Hud = observer(class Hud extends Component {
   render() {
-    const { health, atk, exp, currentWeapon} = this.props.store.hero;
+    const { health, atk, currentWeapon} = this.props.store.hero;
     const { playerLevel, expTillNext } = this.props.store;
 
     return(

@@ -2,6 +2,7 @@ import { action, extendObservable, computed } from 'mobx';
 import TheHero from './characters/TheHero';
 import { firstRoom, createDungeon, placeWalls} from './DungeonGenerator';
 import FinalBoss from './characters/finalBoss';
+import weapons from './characters/weapons';
 
 const chop = (num) => Math.ceil(num / 2);
 
@@ -14,6 +15,7 @@ export class MainStore {
       portalRoom: {},
       xPos: 0,
       yPos: 0,
+      addedHealth: 0,
       previousTile:{ x: 0, y: 0 },
       gameLevel: 1,
       playerLevel: computed(() => {
@@ -24,6 +26,13 @@ export class MainStore {
           if (exp >= 0) level++;
         }
         return level;
+      }),
+
+      levelUp: action((level) => {
+        if (level < this.playerLevel){
+          this.hero.health = 50 + (this.playerLevel * 50);
+          this.hero.totalHealth = 50 + (this.playerLevel * 50);
+        }
       }),
 
       expTillNext: computed(() => {
@@ -63,7 +72,6 @@ export class MainStore {
       }),
 
       checkNextTile: action((nextTile) => {
-        const monster = "Mygo" || "Abomination" || "Skraw" || "ArachnaDemos";
         switch (nextTile.type) {
           case 'floor':
             return true;
@@ -88,6 +96,8 @@ export class MainStore {
       }),
 
       pickUpWeapon:action((weapon) => {
+        this.hero.currentWeapon = weapon.name;
+        this.hero.atk = (this.playerLevel * 10) + weapon.atkUp;
         return true;
       }),
 
@@ -98,7 +108,7 @@ export class MainStore {
       }),
 
       pickUpHealth: action((healthAmt) => {
-        this.hero.health += healthAmt;
+        if (this.hero.health < this.hero.totalHealth) this.hero.health += healthAmt;
         return true;
       }),
 
@@ -146,26 +156,49 @@ export class MainStore {
       }),
 
       fightMonster: action((tile) => {
-        console.log(tile.x, tile.y);
+          const oldLevel = this.playerLevel;
           const monster = tile.monsterClass;
           monster.health -= this.hero.atk;
-          this.hero.health -= monster.atk;
+          this.handleLoss(monster.atk);
           if (this.hero.health <= 0) {
             alert('You died.');
             this.resetGame();
           }
           else if (monster.health <= 0) {
             this.hero.exp += monster.expGain;
+            this.levelUp(oldLevel);
             return this.weaponDrop(tile);
           }
 
+      }),
+      handleLoss: action((mstrAtk) => {
+        let i = 0;
+        while (this.addedHealth > 0) {
+          i++;
+          this.addedHealth -= 1;
+        }
+        this.hero.health -= (mstrAtk - i);
+      }),
+      weaponChooser: action(() => {
+        let selectArr = weapons.filter((el) => {
+          if (el.levelReq <= this.playerLevel){
+             if (this.playerLevel >= 3) {
+               return el.name !== this.hero.currentWeapon;
+             }
+             else {
+               return true;
+             }
+           }
+           return false;
+        });
+        return selectArr[Math.floor(Math.random()*selectArr.length)];
       }),
 
       weaponDrop: action((tile) => {
         const { x,y } = tile;
         if (Math.random() * 100 < 40) {
-          console.log('fired');
-          this.grid[y][x] = { type: 'weapon' };
+          const obj = this.weaponChooser();
+          this.grid[y][x] = { type: 'weapon', weapon: obj };
           return false;
         }
         return true;

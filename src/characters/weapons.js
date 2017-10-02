@@ -1,4 +1,4 @@
-const weapons = [
+export const weapons = [
   {
     name: 'Dagger',
     atkUp: 10,
@@ -36,3 +36,5 @@ const weapons = [
     levelReq: 8
   }
 ];
+
+export default weapons;

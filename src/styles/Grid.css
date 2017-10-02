@@ -24,7 +24,8 @@
   background-image: url("../gameElements/ice2.png");
 }
 .hero {
-  background: green;
+  background-image: url("../gameElements/hero.png"), url("../gameElements/ice2.png");
+  background-size: contain;
 }
 
 .portal {

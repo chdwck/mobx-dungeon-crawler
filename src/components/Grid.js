@@ -22,7 +22,7 @@ const Dungeon = observer(class Dungeon extends Component {
                   key={i}
                 >
                   {
-                    (cell.type === "Boss") ? <img src={Cthulu} /> : null
+                    (cell.type === "Boss") ? <img alt="" src={Cthulu} /> : null
                   }
                 </div>
               );
