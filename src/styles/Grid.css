@@ -20,6 +20,10 @@
   background: black;
 }
 
+.hidden {
+  background: black !important;
+}
+
 .floor {
   background-image: url("../gameElements/ice2.png");
 }
@@ -75,5 +79,4 @@ img {
 }
 .wall {
   background-image: url("../gameElements/cobble_blood8.png");
-  border-radius: 10%;
 }

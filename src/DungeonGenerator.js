@@ -17,7 +17,7 @@ export const placeWalls = (grid, y, x) => {
   for (let i = y - 1; i <= y + 1; i++ ) {
     for (let j = x -1; j <= x + 1; j++) {
       if (grid[i] !== undefined && grid[i][j].type === 0 && grid[i][j] !== undefined) {
-        grid[i][j] = { type: "wall" }
+        grid[i][j] = { type: "wall", hidden: true }
       }
     }
   }
@@ -30,14 +30,14 @@ const placeCells = (grid, {x, y, width = 1, height = 1, id}, type = 'floor') => 
       switch (type) {
         case 'floor':
           placeWalls(grid, i, j);
-          grid[i][j] = { type, id };
+          grid[i][j] = { type, id, hidden: true};
           break;
         case 'monster':
           const mon = Monsters[mIndex];
-          grid[i][j] = { type: mon.name, monsterClass: mon, x:j, y:i};
+          grid[i][j] = { type: mon.name, monsterClass: mon, x:j, y:i, hidden: true };
           break;
         case 'health':
-          grid[i][j] = { type, healthAmt: 10 };
+          grid[i][j] = { type, healthAmt: 10, hidden: true };
           break;
         default:
           console.log('Not an option');

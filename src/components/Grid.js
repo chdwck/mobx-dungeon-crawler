@@ -7,6 +7,7 @@ const Dungeon = observer(class Dungeon extends Component {
   componentDidMount() {
     this.props.store.trackPosition();
     this.props.store.compiledCreation();
+    this.props.store.noReset = true;
   }
 
   render() {
@@ -18,7 +19,10 @@ const Dungeon = observer(class Dungeon extends Component {
 
               return(
                 <div
-                  className={cell.type + " cell"}
+                  className=
+                  {
+                      ((cell.hidden) ? "hidden " : "") + cell.type + " cell"
+                   }
                   key={i}
                 >
                   {

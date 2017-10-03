@@ -18,6 +18,7 @@ export class MainStore {
       addedHealth: 0,
       previousTile:{ x: 0, y: 0 },
       gameLevel: 1,
+      noReset: true,
       playerLevel: computed(() => {
         let exp = this.hero.exp;
         let level=1;
@@ -102,6 +103,7 @@ export class MainStore {
       }),
 
       syncStoreWithPos: action(() => {
+        this.grid[this.yPos][this.xPos].hidden = true;
         this.xPos = firstRoom.x;
         this.yPos = firstRoom.y;
         this.grid[0][0] = { type: 'cell' };
@@ -120,7 +122,7 @@ export class MainStore {
         const { x, y, width, height } = this.portalRoom;
         let finalX = x + (chop(width) - 1);
         let finalY = y - (chop(height) - height);
-        this.grid[finalY][finalX] = { type: 'portal' };
+        this.grid[finalY][finalX] = { type: 'portal', hidden: true };
       }),
 
       placeBossRoom: action(() => {
@@ -150,9 +152,25 @@ export class MainStore {
       }),
 
       moveCharacter: action(() => {
+        console.log("(this.xPos !== x || this.yPos !== y) && this.noReset = " + (this.xPos !== x || this.yPos !== y) && this.noReset);
         const {x, y} = this.previousTile;
         this.grid[this.yPos][this.xPos] = { type: "hero"};
-        if (this.xPos !== x || this.yPos !== y) this.grid[y][x] = { type: 'floor' };
+        this.shineLight();
+        if ((this.xPos !== x || this.yPos !== y) && this.noReset) this.grid[y][x] = { type: 'floor' };
+        this.noReset = true;
+      }),
+
+      shineLight: action(() => {
+        for (let i = 0; i < 2; i++ ) {
+          this.grid[this.yPos + i][this.xPos].hidden = false;
+          this.grid[this.yPos][this.xPos + i].hidden = false;
+          this.grid[this.yPos - i][this.xPos].hidden = false;
+          this.grid[this.yPos][this.xPos - i].hidden = false;
+          this.grid[this.yPos + i][this.xPos + i].hidden = false;
+          this.grid[this.yPos - i][this.xPos - i].hidden = false;
+          this.grid[this.yPos - i][this.xPos + i].hidden = false;
+          this.grid[this.yPos + i][this.xPos - i].hidden = false;
+        }
       }),
 
       fightMonster: action((tile) => {
@@ -163,6 +181,7 @@ export class MainStore {
           if (this.hero.health <= 0) {
             alert('You died.');
             this.resetGame();
+            return false;
           }
           else if (monster.health <= 0) {
             this.hero.exp += monster.expGain;
@@ -217,6 +236,8 @@ export class MainStore {
         this.syncStoreWithPos();
         (this.gameLevel === 5)
           ? this.placeBossRoom() : this.placePortal();
+          this.noReset = false;
+
       }),
       resetGame: action(() => {
         this.compiledCreation();
