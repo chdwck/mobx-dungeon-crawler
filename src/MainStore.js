@@ -19,6 +19,7 @@ export class MainStore {
       previousTile:{ x: 0, y: 0 },
       gameLevel: 1,
       noReset: true,
+      playing: false,
       playerLevel: computed(() => {
         let exp = this.hero.exp;
         let level=1;
@@ -90,16 +91,27 @@ export class MainStore {
           case 'weapon':
             return this.pickUpWeapon(nextTile.weapon);
           case 'portal':
-            this.gameLevel++;
-            this.compiledCreation();
+            this.handlePortal();
             break;
         }
       }),
 
+      handlePortal: action(() => {
+        this.playSound('portal');
+        this.gameLevel++;
+        this.compiledCreation();
+      }),
+
       pickUpWeapon:action((weapon) => {
+        this.playSound('pickUpSword');
         this.hero.currentWeapon = weapon.name;
         this.hero.atk = (this.playerLevel * 10) + weapon.atkUp;
         return true;
+      }),
+
+      playSound: action((id) => {
+        document.getElementById(id).load();
+        document.getElementById(id).play();
       }),
 
       syncStoreWithPos: action(() => {
@@ -110,6 +122,7 @@ export class MainStore {
       }),
 
       pickUpHealth: action((healthAmt) => {
+        this.playSound('health');
         if (this.hero.health < this.hero.totalHealth) this.hero.health += healthAmt;
         return true;
       }),
@@ -152,7 +165,7 @@ export class MainStore {
       }),
 
       moveCharacter: action(() => {
-        console.log("(this.xPos !== x || this.yPos !== y) && this.noReset = " + (this.xPos !== x || this.yPos !== y) && this.noReset);
+        this.playSound('walk');
         const {x, y} = this.previousTile;
         this.grid[this.yPos][this.xPos] = { type: "hero"};
         this.shineLight();
@@ -176,8 +189,10 @@ export class MainStore {
       fightMonster: action((tile) => {
           const oldLevel = this.playerLevel;
           const monster = tile.monsterClass;
+          (this.hero.currentWeapon === "Bare fists") ? this.playSound('punch') : this.playSound('slice');
+          this.playSound(monster.name);
           monster.health -= this.hero.atk;
-          this.handleLoss(monster.atk);
+          this.hero.health -= (monster.atk + (5 * this.gameLevel));
           if (this.hero.health <= 0) {
             alert('You died.');
             this.resetGame();
@@ -190,23 +205,11 @@ export class MainStore {
           }
 
       }),
-      handleLoss: action((mstrAtk) => {
-        let i = 0;
-        while (this.addedHealth > 0) {
-          i++;
-          this.addedHealth -= 1;
-        }
-        this.hero.health -= (mstrAtk - i);
-      }),
+
       weaponChooser: action(() => {
         let selectArr = weapons.filter((el) => {
           if (el.levelReq <= this.playerLevel){
-             if (this.playerLevel >= 3) {
-               return el.name !== this.hero.currentWeapon;
-             }
-             else {
-               return true;
-             }
+              return (this.playerLevel >= 3) ? el.name !== this.hero.currentWeapon : true;
            }
            return false;
         });
@@ -214,10 +217,9 @@ export class MainStore {
       }),
 
       weaponDrop: action((tile) => {
-        const { x,y } = tile;
         if (Math.random() * 100 < 40) {
           const obj = this.weaponChooser();
-          this.grid[y][x] = { type: 'weapon', weapon: obj };
+          this.grid[tile.y][tile.x] = { type: 'weapon', weapon: obj };
           return false;
         }
         return true;
