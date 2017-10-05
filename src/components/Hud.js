@@ -2,11 +2,15 @@ import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 
 const Hud = observer(class Hud extends Component {
+  componentDidMount() {
+    this.handleClick();
+  }
+
   handleClick() {
     const s = document.getElementById('Song');
-    let { playing } = this.props.store;
-    this.props.store.playing = !this.props.store.playing;
-    playing ? s.pause() : s.play();
+    let { playingMusic } = this.props.store;
+    this.props.store.playingMusic = !this.props.store.playingMusic;
+    playingMusic ? s.pause() : s.play();
   }
 
   render() {
@@ -21,7 +25,7 @@ const Hud = observer(class Hud extends Component {
         <h1>{"Level: " + playerLevel}</h1>
         <p>{"Exp till next level: " + expTillNext}</p>
         <button onClick={() => this.handleClick()}>
-          {this.props.store.playing ? 'Pause' : 'Play'}
+          {this.props.store.playingMusic ? 'Pause Music' : 'Play Music'}
         </button>
       </div>
     );

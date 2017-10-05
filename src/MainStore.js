@@ -19,7 +19,8 @@ export class MainStore {
       previousTile:{ x: 0, y: 0 },
       gameLevel: 1,
       noReset: true,
-      playing: false,
+      gameStart: false,
+      playingMusic: false,
       playerLevel: computed(() => {
         let exp = this.hero.exp;
         let level=1;
