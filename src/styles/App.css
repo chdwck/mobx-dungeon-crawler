@@ -9,6 +9,7 @@ html, body{
 
 #root {
   width: 100%;
+  height: 100%;
   margin: 0;
   font-family: 'Press Start 2P', cursive;
   background-image: url('./background.jpg');
@@ -18,9 +19,12 @@ html, body{
 
 
 .HudAndGrid {
-  margin-top: 10vh;
+  padding: 5vh;
+  margin: 0;
   display: flex;
   justify-content: center;
+  background-image: url('./background.jpg');
+
 }
 
 .Footer {

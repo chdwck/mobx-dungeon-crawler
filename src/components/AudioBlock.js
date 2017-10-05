@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
-import Song from "../gameElements/Rest_You_Sleeping_Giant_-_Light_Lab.ogg";
+import Song from "../gameElements/Rolemusic_-_Atarash_ryshi.ogg";
+import Song2 from "../gameElements/Rolemusic_-_Keiken_soku.ogg";
 import Mygo from "../gameElements/monster1.ogg";
 import Skraw from "../gameElements/monster2.ogg";
 import ArachnaDemos from "../gameElements/monster3.ogg";
@@ -13,6 +14,11 @@ import cthuluWarn from "../gameElements/cthuluWarn.ogg";
 import cthuluEnd from "../gameElements/cthuluEnd.ogg";
 import pickUpSword from "../gameElements/pickUpSword.ogg";
 import portal from "../gameElements/portal.ogg";
+import Opener from "../gameElements/opener.ogg";
+import Confirm from "../gameElements/confirm.ogg";
+
+
+
 
 const AudioBlock = observer(class AudioBlock extends Component {
   render() {
@@ -20,6 +26,15 @@ const AudioBlock = observer(class AudioBlock extends Component {
       <div>
         <audio id="Song">
           <source src={Song} type="audio/ogg" />
+        </audio>
+        <audio id="Song2">
+          <source src={Song2} type="audio/ogg" />
+        </audio>
+        <audio id="Confirm">
+          <source src={Confirm} type="audio/ogg" />
+        </audio>
+        <audio id="Opener">
+          <source src={Opener} type="audio/ogg" />
         </audio>
         <audio id="Mygo">
           <source src={Mygo} type="audio/ogg" />
@@ -57,6 +72,7 @@ const AudioBlock = observer(class AudioBlock extends Component {
         <audio id="portal">
           <source src={portal} type="audio/ogg" />
         </audio>
+
       </div>
     );
   }
