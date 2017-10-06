@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
-import Song from "../gameElements/Rolemusic_-_Atarash_ryshi.ogg";
-import Song2 from "../gameElements/Rolemusic_-_Keiken_soku.ogg";
+import Song from "../gameElements/gameMusic.ogg";
 import Mygo from "../gameElements/monster1.ogg";
 import Skraw from "../gameElements/monster2.ogg";
 import ArachnaDemos from "../gameElements/monster3.ogg";
@@ -26,9 +25,6 @@ const AudioBlock = observer(class AudioBlock extends Component {
       <div>
         <audio id="Song">
           <source src={Song} type="audio/ogg" />
-        </audio>
-        <audio id="Song2">
-          <source src={Song2} type="audio/ogg" />
         </audio>
         <audio id="Confirm">
           <source src={Confirm} type="audio/ogg" />

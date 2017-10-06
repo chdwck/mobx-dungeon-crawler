@@ -111,8 +111,10 @@ export class MainStore {
       }),
 
       playSound: action((id) => {
-        document.getElementById(id).load();
-        document.getElementById(id).play();
+        let s = document.getElementById(id);
+        s.load();
+        s.play();
+        if (id === 'Song') s.loop = true;
       }),
 
       syncStoreWithPos: action(() => {
@@ -243,6 +245,7 @@ export class MainStore {
 
       }),
       resetGame: action(() => {
+        this.playSound('Song');
         this.compiledCreation();
         this.hero = TheHero;
         this.gameLevel = 1;

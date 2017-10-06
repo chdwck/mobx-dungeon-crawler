@@ -18,7 +18,7 @@ const TitleScreen = observer(class TitleScreen extends Component {
       <div className="TitleScreen">
           <AudioBlock />
           <h1 className="Title">Mobx-React Dungeon Crawler</h1>
-        <h1 onClick={() => this.handleClick() }>
+        <h1 className="PlayButton" onClick={() => this.handleClick() }>
           * Play *
         </h1>
       </div>
