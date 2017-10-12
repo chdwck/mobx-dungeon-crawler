@@ -2,6 +2,7 @@
   "name": "mobx-dungeon-crawler",
   "version": "0.1.0",
   "private": true,
+  "homepage": "http://mrchadparkour.github.io/mobx-dungeon-crawler",
   "dependencies": {
     "lodash": "^4.17.4",
     "mobx": "^3.3.0",
