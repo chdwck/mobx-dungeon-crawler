@@ -69,6 +69,8 @@ export class MainStore {
             case 40:
               if (this.checkNextTile(this.grid[this.yPos+1][this.xPos])) this.yPos += 1;
               break;
+            default:
+              break;
           }
           this.moveCharacter();
         })
@@ -93,6 +95,8 @@ export class MainStore {
             return this.pickUpWeapon(nextTile.weapon);
           case 'portal':
             this.handlePortal();
+            break;
+          default:
             break;
         }
       }),

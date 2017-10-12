@@ -16,9 +16,6 @@ import portal from "../gameElements/portal.ogg";
 import Opener from "../gameElements/opener.ogg";
 import Confirm from "../gameElements/confirm.ogg";
 
-
-
-
 const AudioBlock = observer(class AudioBlock extends Component {
   render() {
     return(

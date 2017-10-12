@@ -3,7 +3,6 @@ import { observer } from 'mobx-react';
 import Grid from './components/Grid';
 import Hud from './components/Hud';
 import AudioBlock from './components/AudioBlock';
-import Footer from './components/Footer';
 import TitleScreen from './components/TitleScreen';
 import './styles/App.css';
 
