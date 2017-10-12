@@ -1,0 +1,22 @@
+{
+  "main.css": "static/css/main.8dc87ad2.css",
+  "main.css.map": "static/css/main.8dc87ad2.css.map",
+  "main.js": "static/js/main.7e738124.js",
+  "main.js.map": "static/js/main.7e738124.js.map",
+  "static/media/background.jpg": "static/media/background.71d08ed6.jpg",
+  "static/media/confirm.ogg": "static/media/confirm.2b06e3e5.ogg",
+  "static/media/cthuluEnd.ogg": "static/media/cthuluEnd.fc09532e.ogg",
+  "static/media/cthuluWarn.ogg": "static/media/cthuluWarn.4c14790a.ogg",
+  "static/media/gameMusic.ogg": "static/media/gameMusic.b17fce06.ogg",
+  "static/media/health.ogg": "static/media/health.a4ea16e0.ogg",
+  "static/media/monster1.ogg": "static/media/monster1.3457aa35.ogg",
+  "static/media/monster2.ogg": "static/media/monster2.514b4325.ogg",
+  "static/media/monster3.ogg": "static/media/monster3.41b6bbae.ogg",
+  "static/media/monster4.ogg": "static/media/monster4.2abc7c3f.ogg",
+  "static/media/opener.ogg": "static/media/opener.b717e4fa.ogg",
+  "static/media/pickUpSword.ogg": "static/media/pickUpSword.c53dedab.ogg",
+  "static/media/portal.ogg": "static/media/portal.43ff39cb.ogg",
+  "static/media/punch.ogg": "static/media/punch.1061aa54.ogg",
+  "static/media/slice.ogg": "static/media/slice.184ed69d.ogg",
+  "static/media/walk.ogg": "static/media/walk.886395b7.ogg"
+}
