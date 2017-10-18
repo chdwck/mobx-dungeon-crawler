@@ -2,7 +2,8 @@ export const finalBoss = {
   name: 'Cthulu',
   BossHeight: 4,
   BossWidth: 5,
-  stats: {
+  monsterClass: {
+    name: 'Cthulu',
     atk: 200,
     health: 1100,
     expGain: 1000000000000,

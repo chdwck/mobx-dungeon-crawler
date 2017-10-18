@@ -59,7 +59,7 @@ const AudioBlock = observer(class AudioBlock extends Component {
         <audio id="cthuluWarn">
           <source src={cthuluWarn} type="audio/ogg" />
         </audio>
-        <audio id="cthuluEnd">
+        <audio id="Cthulu">
           <source src={cthuluEnd} type="audio/ogg" />
         </audio>
         <audio id="portal">

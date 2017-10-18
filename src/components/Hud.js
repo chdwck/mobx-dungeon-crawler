@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 
 const Hud = observer(class Hud extends Component {
   componentDidMount() {
-    this.handleClick();
+    if (this.props.store.gameLevel !== 5) this.handleClick();
   }
 
   handleClick() {

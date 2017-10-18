@@ -16,7 +16,7 @@ export const placeWalls = (grid, y, x) => {
   while (grid === undefined) {console.log('waiting, waiting, waiting')}
   for (let i = y - 1; i <= y + 1; i++ ) {
     for (let j = x -1; j <= x + 1; j++) {
-      if (grid[i] !== undefined && grid[i][j].type === 0 && grid[i][j] !== undefined) {
+      if (grid[i] !== undefined && grid[i][j] !== undefined && grid[i][j].type === 0) {
         grid[i][j] = { type: "wall", hidden: true }
       }
     }

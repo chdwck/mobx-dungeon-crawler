@@ -77,3 +77,26 @@ html, body{
   50% { color: white;}
   100% { color: black;}
 }
+
+.Hitbox1 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 50px;
+  width: 50px;
+  background-color: green;
+  z-index: 2;
+  position: absolute;
+  color: white;
+  opacity: 0;
+}
+
+.Hitbox2 {
+  height: 100px;
+  width: 100px;
+  background-color: transparent;
+  z-index: 2;
+  border: 3px solid green;
+  position: absolute;
+  opacity: 0;
+ }

@@ -1,21 +1,25 @@
 import { action, extendObservable, computed } from 'mobx';
 import TheHero from './characters/TheHero';
 import { firstRoom, createDungeon, placeWalls} from './DungeonGenerator';
+import { crossTarget, hide, confirmClick } from './animation';
 import FinalBoss from './characters/finalBoss';
 import weapons from './characters/weapons';
+const arrOfKeys = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
+                   'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+
 
 const chop = (num) => Math.ceil(num / 2);
 
 export class MainStore {
   constructor() {
     extendObservable(this, {
+      //observerables for the main game
       hero: TheHero,
-      boss: FinalBoss.stats,
+      boss: FinalBoss,
       grid: [],
       portalRoom: {},
       xPos: 0,
       yPos: 0,
-      addedHealth: 0,
       previousTile:{ x: 0, y: 0 },
       gameLevel: 1,
       noReset: true,
@@ -31,19 +35,19 @@ export class MainStore {
         return level;
       }),
 
-      levelUp: action((level) => {
-        if (level < this.playerLevel){
-          this.hero.health = 50 + (this.playerLevel * 50);
-          this.hero.totalHealth = 50 + (this.playerLevel * 50);
-        }
-      }),
-
       expTillNext: computed(() => {
         let total = 0;
         for (let i = 1; i <= this.playerLevel; i++) {
           total += (i * 100);
         }
         return total - this.hero.exp;
+      }),
+
+      levelUp: action((level) => {
+        if (level < this.playerLevel){
+          this.hero.health = 50 + (this.playerLevel * 50);
+          this.hero.totalHealth = 50 + (this.playerLevel * 50);
+        }
       }),
 
       makeCurrentDungeon: action(() => {
@@ -55,24 +59,27 @@ export class MainStore {
       trackPosition: action(() => {
         window.addEventListener('keydown', (e) => {
           e.preventDefault();
-          this.previousTile = { y: this.yPos, x: this.xPos };
-          switch (e.keyCode) {
-            case 37:
-              if (this.checkNextTile(this.grid[this.yPos][this.xPos-1])) this.xPos -= 1;
-              break;
-            case 38:
-              if (this.checkNextTile(this.grid[this.yPos-1][this.xPos])) this.yPos -= 1;
-              break;
-            case 39:
-              if (this.checkNextTile(this.grid[this.yPos][this.xPos+1])) this.xPos += 1;
-              break;
-            case 40:
-              if (this.checkNextTile(this.grid[this.yPos+1][this.xPos])) this.yPos += 1;
-              break;
-            default:
-              break;
+          if(e.keyCode < 37 || e.keyCode > 40) {
+            this.recievePlayerInput(e.keyCode);
           }
-          this.moveCharacter();
+          this.previousTile = { y: this.yPos, x: this.xPos };
+            switch (e.keyCode) {
+              case 37:
+                if (this.checkNextTile(this.grid[this.yPos][this.xPos-1])) this.xPos -= 1;
+                break;
+              case 38:
+                if (this.checkNextTile(this.grid[this.yPos-1][this.xPos])) this.yPos -= 1;
+                break;
+              case 39:
+                if (this.checkNextTile(this.grid[this.yPos][this.xPos+1])) this.xPos += 1;
+                break;
+              case 40:
+                if (this.checkNextTile(this.grid[this.yPos+1][this.xPos])) this.yPos += 1;
+                break;
+              default:
+                break;
+            }
+            this.moveCharacter();
         })
       }),
 
@@ -146,38 +153,43 @@ export class MainStore {
       }),
 
       placeBossRoom: action(() => {
+        this.playSound('cthuluWarn');
         if (this.portalRoom === undefined) {
           this.compiledCreation();
           return null;
         }
         const { x, y, width, height } = this.portalRoom;
-        const { BossHeight, BossWidth, stats } = FinalBoss;
+        const { BossHeight, BossWidth, monsterClass } = FinalBoss;
         this.prepareBossRoom(x, y, width, height);
         let finalX = x + (chop(width)) - 2;
         let finalY = y - (chop(height) - height);
         for (let i = finalY; i < BossHeight + finalY; i++) {
           for (let j = finalX; j < BossWidth + finalX; j++) {
-            this.grid[i][j] = { type: 'BossArea', monsterClass: stats }
+            this.grid[i][j] = { type: 'BossArea', monsterClass: monsterClass, hidden: true }
           }
         }
-        this.grid[finalY][finalX] = {type: 'Boss', monsterClass: stats}
+        this.grid[finalY][finalX] = {type: 'Boss', monsterClass: monsterClass, hidden: true}
       }),
       prepareBossRoom: action((x, y, width, height) => {
         for (let i = y; i < y + height + 2; i++){
           for (let j = x; j < x + width + 2; j++){
             placeWalls(this.grid, i , j);
-            this.grid[i][j] = {type: 'floor', id: 'P' };
+            this.grid[i][j] = {type: 'floor', id: 'P', hidden: true };
           }
         }
       }),
 
       moveCharacter: action(() => {
-        this.playSound('walk');
-        const {x, y} = this.previousTile;
-        this.grid[this.yPos][this.xPos] = { type: "hero"};
-        this.shineLight();
-        if ((this.xPos !== x || this.yPos !== y) && this.noReset) this.grid[y][x] = { type: 'floor' };
-        this.noReset = true;
+        if (this.hero.health <= 0) {
+          this.resetGame();
+          return true;
+        } else {
+          this.playSound('walk');
+          const {x, y} = this.previousTile;
+          this.grid[this.yPos][this.xPos] = { type: "hero"};
+          this.shineLight();
+          if ((this.xPos !== x || this.yPos !== y)) this.grid[y][x] = { type: 'floor' };
+        }
       }),
 
       shineLight: action(() => {
@@ -196,21 +208,21 @@ export class MainStore {
       fightMonster: action((tile) => {
           const oldLevel = this.playerLevel;
           const monster = tile.monsterClass;
+          let baseDamage = monster.atk + (5 * this.gameLevel);
+          this.playerDamage(baseDamage);  //applys damage to player
           (this.hero.currentWeapon === "Bare fists") ? this.playSound('punch') : this.playSound('slice');
           this.playSound(monster.name);
           monster.health -= this.hero.atk;
-          this.hero.health -= (monster.atk + (5 * this.gameLevel));
-          if (this.hero.health <= 0) {
-            alert('You died.');
-            this.resetGame();
-            return false;
-          }
-          else if (monster.health <= 0) {
-            this.hero.exp += monster.expGain;
-            this.levelUp(oldLevel);
-            return this.weaponDrop(tile);
-          }
-
+            if (this.hero.health <= 0) {
+                alert('You died.');
+                this.resetGame();
+                return false;
+              }
+            else if (monster.health <= 0) {
+                this.hero.exp += monster.expGain;
+                this.levelUp(oldLevel);
+                return this.weaponDrop(tile);
+              }
       }),
 
       weaponChooser: action(() => {
@@ -245,7 +257,6 @@ export class MainStore {
         this.syncStoreWithPos();
         (this.gameLevel === 5)
           ? this.placeBossRoom() : this.placePortal();
-          this.noReset = false;
 
       }),
       resetGame: action(() => {
@@ -253,6 +264,55 @@ export class MainStore {
         this.compiledCreation();
         this.hero = TheHero;
         this.gameLevel = 1;
+      }),
+
+      //Functionality for fight animation and timing
+      chosenKey: "",
+      playerInput: "",
+      percentWinStr: 0,
+      percentWin: 0,
+      pos1:0,
+      pos2: 0,
+      playerDamage: action((num) => {
+        this.resetPos();
+        this.choseKey();
+        this.animateAndPlay(num);
+      }),
+      recievePlayerInput: action((keyCode) => this.playerInput = String.fromCharCode(keyCode)),
+      animateAndPlay: action((num) => {
+          const correct = this.chosenKey === this.playerInput;
+          if (!correct && this.pos2 < 60) {
+            this.pos1 = this.pos2;
+            this.pos2++;
+            crossTarget(this.pos1, this.pos2);
+            setTimeout(() => {
+              this.animateAndPlay(num);
+            }, 20);
+          } else if (correct) {
+              confirmClick();
+              this.getAccuracy(this.pos2);
+              this.resetPos();
+              this.hero.health -= Math.floor(num - (this.percentWin * num));
+           } else if (this.pos2 === 60){
+              hide();
+              this.hero.health -= num;
+          }
+
+      }),
+
+      getAccuracy: action((pos) => {
+        let cent = (pos === 54 || pos === 44)
+          ? 10
+          : (pos > 54 || pos < 44)
+          ? 0
+          : 100 - ((Math.abs(49 - pos)) * 20);
+          this.percentWin = cent / 100;
+          this.percentWinStr = `${cent}% reduction!`;
+      }),
+      choseKey: action(() => this.chosenKey = arrOfKeys[Math.floor(Math.random() * 25)]),
+      resetPos: action(() => {
+        this.pos1 = 0;
+        this.pos2 = 0;
       })
     })
   }

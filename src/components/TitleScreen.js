@@ -21,6 +21,13 @@ const TitleScreen = observer(class TitleScreen extends Component {
         <h1 className="PlayButton" onClick={() => this.handleClick() }>
           * Play *
         </h1>
+        <p>Instructions</p>
+        <ol>
+          <li>Use arrow keys to move.</li>
+          <li>Collide with enemies to intiate timing game to determine recieved damage.</li>
+          <li>Build Exp and crawl through levels to destroy the Lord of Choas.</li>
+          <li>Some enemies are tougher then others, pick your battles wisely.</li>
+        </ol>
       </div>
     );
   }
