@@ -182,7 +182,6 @@ export class MainStore {
       moveCharacter: action(() => {
         if (this.hero.health <= 0) {
           this.resetGame();
-          return true;
         } else {
           this.playSound('walk');
           const {x, y} = this.previousTile;
@@ -255,7 +254,7 @@ export class MainStore {
       compiledCreation: action(() => {
         this.makeCurrentDungeon();
         this.syncStoreWithPos();
-        (this.gameLevel === 5)
+        (this.gameLevel === 1)
           ? this.placeBossRoom() : this.placePortal();
 
       }),
@@ -265,8 +264,7 @@ export class MainStore {
         this.hero = TheHero;
         this.gameLevel = 1;
       }),
-
-      //Functionality for fight animation and timing
+      
       chosenKey: "",
       playerInput: "",
       percentWinStr: 0,
